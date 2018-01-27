@@ -1,0 +1,24 @@
+<div *ngIf="(source.summaries|async);let summaries">
+  <div *ngIf="summaries.length" class="mb-2">
+    <p class="mb-0" *ngFor="let summary of summaries" [innerHTML]="summary|trustedHtml"></p>
+  </div>
+</div>
+<div #hScrollContainer style="width:100%;" [style.overflow-x]="scrollable ? 'auto' : 'hidden'">
+  <div #hScrollContent style="min-width:100%;" [style.width]="scrollable ? 300+(source.cols|async).length*80 + 'px' : 'auto'">
+    <div [class.table-scrollable]="scrollable">
+      <mat-table #table [dataSource]="source" matSort [matSortActive]="defaultSort" matSortDirection="asc">
+        <ng-container [matColumnDef]="col.key" *ngFor="let col of source.cols|async;trackBy: colTrackBy">
+          <mat-header-cell [ngStyle]="col.style" *matHeaderCellDef mat-sort-header (click)="colClicked(col)">
+            <span [innerHtml]="col.label|trustedHtml"></span>
+          </mat-header-cell>
+          <mat-cell [ngStyle]="col.style" *matCellDef="let element" (click)="rowClicked(element, col)" [ngSwitch]="col._type">
+            <span *ngSwitchCase="'string'" [innerHTML]="(element[col.key+'Html'] || element[col.key]) | trustedHtml"></span>
+            <span *ngSwitchDefault [innerHTML]="(element[col.key+'Html'] || element[col.key]) | finNum | trustedHtml"></span>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="source.columnKeys|async"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: (source.columnKeys|async);"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+</div>
