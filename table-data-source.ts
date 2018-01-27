@@ -95,6 +95,7 @@ export class TableDataSource extends DataSource<any>  {
         if (n instanceof Date) {
             return moment(n).format('YYYY-MM-DD HH:mm').replace(/ 00:00$/, '');
         }
+        return n;
     }
     protected toAoa() {
         const cols = this.cols.getValue();
